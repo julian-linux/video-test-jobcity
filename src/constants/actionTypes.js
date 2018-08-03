@@ -5,6 +5,7 @@ const actionTypes = keyMirrorNested({
         CLIP: {
             ADD: null,
             EDIT: null,
+            DELETE: null,
         }
     },
 }, '_');

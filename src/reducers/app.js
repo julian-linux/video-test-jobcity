@@ -11,6 +11,14 @@ const initialState = {
 
 const app = (state = initialState, action) => {
     switch (action.type) {
+        case actionTypes.APP.CLIP.DELETE:
+        return {
+            ...state,
+            // selectedClipIdx: null,
+            // selectedClip: {},
+            clips: state.clips.filter((clip, idx) => idx !== action.idx)
+        }
+
         case actionTypes.APP.CLIP.EDIT:
         return {
             ...state,
@@ -33,11 +41,11 @@ const app = (state = initialState, action) => {
                 clips.push(action.clip);
             }
 
-            // }
             return {
                 ...state,
                 clips,
                 selectedClipIdx: null,
+                selectedClip: {}
             }
         default:
             return { ...initialState };
