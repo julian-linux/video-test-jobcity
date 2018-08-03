@@ -1,21 +1,27 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Input, Form, FormGroup, Label, Col, Button, FormFeedback } from 'reactstrap';
+
+import { addClip } from '../actions/app';
 
 class FormSearch extends Component {
 
   constructor(props) {
     super(props);
+
+    const { selectedClip } = props.appState;
+
     this.state = {
       duplicated: false,
       sameTime: false,
       sameTimeLine: false,
       startGreater: false,
       data: {
-        name: '',
-        tags: '',
-        start: 0,
-        end: 1,
+        name: selectedClip.name || 'a',
+        tags: selectedClip.tags || '',
+        start: selectedClip.start || 0,
+        end: selectedClip.end || 1,
       },
       notValid: {
         name: false,
@@ -29,32 +35,8 @@ class FormSearch extends Component {
     this.changeValue = this.changeValue.bind(this);
   }
 
-  restartValidations() {
-    const clip = this.state.data;
-    const notValid = {
-      name: false,
-      start: false,
-      end: false,
-    };
-
-    const data = {
-      name: '',
-      tags: '',
-      start: 0,
-      end: 1,
-    };
-
-    const duplicated = false;
-    const sameTimeLine = false;
-
-    this.setState({
-      notValid,
-      data,
-      duplicated,
-      sameTimeLine
-    }, () => {
-      this.props.onAddClip(clip);
-    });
+  componentWillMount() {
+    this.isEditing = !isNaN(this.props.idxClip);
   }
 
   addClip(evt) {
@@ -114,22 +96,64 @@ class FormSearch extends Component {
     let sameTimeLine = false;
 
     // eslint-disable-next-line
-    this.props.listClips.every(clip => {
+    const { clips } = this.props.appState;
+
+    clips.every((clip, idxListClip) => {
+      if (idxListClip === this.props.idxClip) {
+        return true;
+      }
+
       if (data.name === clip.name) {
         duplicated = true;
         return false;
       }
+
       if (data.start === clip.start && data.end === clip.end) {
         sameTimeLine = true;
         return false;
       }
+
+      return true;
     });
 
     if (duplicated || sameTimeLine) {
-      this.setState({ duplicated, sameTimeLine });
+      const notValid = {
+        name: false,
+        start: false,
+        end: false,
+      };
+      this.setState({ duplicated, sameTimeLine, notValid });
     } else {
       this.restartValidations();
     }
+  }
+
+  restartValidations() {
+    const clip = this.state.data;
+    const notValid = {
+      name: false,
+      start: false,
+      end: false,
+    };
+
+    const data = {
+      name: '',
+      tags: '',
+      start: 0,
+      end: 1,
+    };
+
+    const duplicated = false;
+    const sameTimeLine = false;
+
+    this.setState({
+      notValid,
+      data,
+      duplicated,
+      sameTimeLine
+    }, () => {
+      this.props.actionAddClip(clip);
+    });
   }
 
   changeValue(input, value) {
@@ -170,13 +194,31 @@ class FormSearch extends Component {
     };
   }
 
-  render() {
-    const { data } = this.state;
+  setButtons() {
 
-    const invalid = this.validateInvalidTexts();
-
+    if (this.props.onlyAdd) {
+      return (
+        <Button type="submit " color="primary" title="Add Clip">
+          <span className="fas fa-plus" />
+        </Button>
+      );
+    }
     return (
       <Fragment>
+        <Button type="submit" color="primary" title="Edit Clip" className="mr-1" >
+          <span className="fas fa-edit" />
+        </Button>
+        <Button type="buttons" color="danger" title="Cancel">
+          <span className="fas fa-times" />
+        </Button>
+      </Fragment>
+    );
+
+  }
+
+  setSearch() {
+    if (this.props.onlyAdd) {
+      return (
         <div className="row mt-2">
           <div className="col-12 text-center">
             <h3>Search Clips</h3>
@@ -187,10 +229,28 @@ class FormSearch extends Component {
             </Form>
           </div>
         </div>
+      )
+    }
+  }
+
+  render() {
+    const { data } = this.state;
+
+    const invalid = this.validateInvalidTexts();
+
+    const buttons = this.setButtons();
+
+    const search = this.setSearch();
+
+    const title = this.props.onlyAdd ?
+      (<div className="col-12 text-center"><h3>Add Clip</h3></div>) :
+      '';
+
+    return (
+      <Fragment>
+        {search}
         <div className="row mt-2">
-          <div className="col-12 text-center">
-            <h3>Add Clip</h3>
-          </div>
+          {title}
           <div className="col-12">
             <Form onSubmit={this.addClip} noValidate>
               <FormGroup row>
@@ -204,17 +264,6 @@ class FormSearch extends Component {
                     onChange={evt => this.changeValue('name', evt.target.value)}
                   />
                   <FormFeedback invalid={invalid.name.invalid ? 'true' : undefined}>{invalid.name.text}</FormFeedback>
-                </Col>
-              </FormGroup>
-              <FormGroup row>
-                <Label for="tags" sm={2}>Tags</Label>
-                <Col sm={10}>
-                  <Input
-                    value={data.tags}
-                    type="text"
-                    id="tags"
-                    placeholder="(Optional)"
-                    onChange={evt => this.changeValue('tags', evt.target.value)} />
                 </Col>
               </FormGroup>
               <FormGroup row>
@@ -249,10 +298,20 @@ class FormSearch extends Component {
                   <FormFeedback invalid={invalid.end.invalid ? 'true' : undefined}>{invalid.end.text}</FormFeedback>
                 </Col>
               </FormGroup>
+              <FormGroup row>
+                <Label for="tags" sm={2}>Tags</Label>
+                <Col sm={10}>
+                  <Input
+                    value={data.tags}
+                    type="text"
+                    id="tags"
+                    placeholder="(Optional)"
+                    onChange={evt => this.changeValue('tags', evt.target.value)} />
+                </Col>
+              </FormGroup>
+
               <FormGroup className="text-right">
-                <Button type="submit " color="primary" title="Add Clip">
-                  <span className="fas fa-plus" />
-                </Button>
+                {buttons}
               </FormGroup>
             </Form>
           </div>
@@ -264,9 +323,22 @@ class FormSearch extends Component {
 }
 
 FormSearch.proptypes = {
-  listClips: PropTypes.array,
-  onAddClip: PropTypes.func,
-  onSearchTag: PropTypes.func,
-}
+  onlyAdd: PropTypes.bool,
+  idxClip: PropTypes.number,
+  appState: PropTypes.object,
+  actionAddClip: PropTypes.func,
+};
 
-export default FormSearch;
+FormSearch.defaultProps = {
+  onlyAdd: true,
+};
+
+const mapStateToProps = state => ({
+  appState: state.app,
+});
+
+const mapDispatchToProps = {
+  actionAddClip: addClip,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(FormSearch);

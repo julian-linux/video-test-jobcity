@@ -1,34 +1,62 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { ListGroup, ListGroupItem } from 'reactstrap';
+import EditClip from '../form';
+
+import { editClip } from '../actions/app';
 
 class List extends Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      editingClip: false,
+    };
+
     this.videoUrl = 'https://download.blender.org/durian/trailer/sintel_trailer-480p.mp4';
 
     this.selectVideo = this.selectVideo.bind(this);
+    this.editClip = this.editClip.bind(this);
+    this.removeClip = this.removeClip.bind(this);
   }
+
+  editClip(evt, idxClip) {
+    evt.preventDefault();
+    this.props.actionEditClip(idxClip);
+  }
+
+  removeClip(ixdClip) {
+
+  }
+
+
 
   selectVideo(clip) {
 
   }
 
-  setClips() {
-    const clips = this.props.listClips.map((clip, ixdClip) => (
-      
-      <ListGroupItem
-        tag="a"
-        href="#"
-        key={clip.name}
-        onClick={evt => this.selectVideo(clip)}
-      >
+  infoClip(ixdClip, clip) {
+    const disabled = this.props.appState.selectedClipIdx !== null;
+    return (
+      <Fragment key={ixdClip}>
         <div className="float-right">
-          <button className="mr-2 btn btn-warning" type="button" title="Edit">
+          <button
+            disabled={disabled}
+            className="mr-2 btn btn-warning"
+            type="button"
+            title="Edit"
+            onClick={evt => this.editClip(evt, ixdClip)}>
             <span className="fas fa-edit " />
           </button>
-          <button className="btn btn-danger" type="button" title="Remove">
+          <button
+            disabled={disabled}
+            className="btn btn-danger"
+            type="button"
+            title="Remove"
+            onClick={evt => this.removeClip(ixdClip)}>
             <span className="fas fa-trash" />
           </button>
         </div>
@@ -42,8 +70,36 @@ class List extends Component {
         <div className="col-12">
           Tags: {clip.tags}
         </div>
-      </ListGroupItem>
-    ));
+      </Fragment>
+    );
+  }
+
+  setClips() {
+    const { clips, selectedClipIdx } = this.props.appState;
+
+    const listClips = clips.map((clip, idxClip) => {
+      if (selectedClipIdx === idxClip) {
+        return (
+          <ListGroupItem
+            key={clip.name}
+          >
+            <EditClip onlyAdd={false} idxClip={idxClip} />
+          </ListGroupItem>
+        )
+      } else {
+        return (
+          <ListGroupItem
+            tag="a"
+            href="#"
+            key={clip.name}
+            onClick={evt => this.selectVideo(clip)}
+          >
+            {this.infoClip(idxClip, clip)}
+          </ListGroupItem>
+        )
+      }
+
+    });
 
     return (
       <ListGroup>
@@ -54,7 +110,7 @@ class List extends Component {
         >
           <h4>Full Video</h4>
         </ListGroupItem>
-        {clips}
+        {listClips}
       </ListGroup>
 
     )
@@ -76,7 +132,18 @@ class List extends Component {
 }
 
 List.proptypes = {
-  listClips: PropTypes.array,
+  appState: PropTypes.object,
+  actionEditClip: PropTypes.func,
 };
 
-export default List;
+// export default List;
+
+const mapStateToProps = state => ({
+  appState: state.app,
+});
+
+const mapDispatchToProps = {
+  actionEditClip: editClip
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(List);
