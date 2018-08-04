@@ -1,5 +1,9 @@
 import actionTypes from '../constants/actionTypes';
 
+const appInit = () => ({
+    type: actionTypes.APP.INIT,
+});
+
 const appAddClip = clip => ({
     type: actionTypes.APP.CLIP.ADD,
     clip
@@ -23,6 +27,8 @@ const appSelectClip = clip => ({
 const appSelectNextClip = () => ({
     type: actionTypes.APP.CLIP.NEXT
 });
+
+export const init = () => dispatch => dispatch(appInit());
 
 export const addClip = clip => dispatch => dispatch(appAddClip(clip));
 

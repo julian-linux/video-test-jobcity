@@ -1,5 +1,5 @@
 import actionTypes from '../constants/actionTypes';
-// import Lockr from 'lockr';
+import Lockr from 'lockr';
 
 const initialState = {
     isEditing: false,
@@ -14,7 +14,17 @@ const initialState = {
 const app = (state = initialState, action) => {
     let actualClip;
     let playClipIdx;
+    let clips;
+
     switch (action.type) {
+        case actionTypes.APP.INIT:
+            clips = Lockr.get('clips') || [];
+
+            return {
+                ...state,
+                clips
+            }
+
         case actionTypes.APP.CLIP.NEXT:
 
             let playClip = false;
@@ -25,7 +35,6 @@ const app = (state = initialState, action) => {
                 }
             });
 
-            
             if (actualClip !== undefined && state.clips[actualClip + 1]) {
                 playClip = true;
                 playClipIdx = actualClip + 1;
@@ -54,9 +63,11 @@ const app = (state = initialState, action) => {
             }
 
         case actionTypes.APP.CLIP.DELETE:
+            clips = state.clips.filter((clip, idx) => idx !== action.idx);
+            Lockr.set('clips', clips);
             return {
                 ...state,
-                clips: state.clips.filter((clip, idx) => idx !== action.idx)
+                clips
             }
 
         case actionTypes.APP.CLIP.EDIT:
@@ -68,7 +79,8 @@ const app = (state = initialState, action) => {
 
         case actionTypes.APP.CLIP.ADD:
 
-            let { clips, selectedClipIdx } = state;
+            let { selectedClipIdx } = state;
+            clips = state.clips;
 
             if (selectedClipIdx !== null) {
                 clips = clips.map((clipFromList, idxList) => {
@@ -80,7 +92,7 @@ const app = (state = initialState, action) => {
             } else {
                 clips.push(action.clip);
             }
-
+            Lockr.set('clips', clips);
             return {
                 ...state,
                 clips,

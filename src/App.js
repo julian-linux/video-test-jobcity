@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Form from './form';
 import List from './list';
 
-import { selectNextClip } from './actions/app';
+import { selectNextClip, init } from './actions/app';
 
 class App extends Component {
   constructor(props) {
@@ -11,8 +11,10 @@ class App extends Component {
     this.jumpNextClip = this.jumpNextClip.bind(this);
   }
 
+  componentDidMount() {
+    this.props.actionInit();
+  }
   jumpNextClip() {
-    
     setTimeout(() => {
       this.props.actionSelectNextClip();
     }, 3000);
@@ -66,6 +68,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   actionSelectNextClip: selectNextClip,
+  actionInit: init,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -2,6 +2,7 @@ import keyMirrorNested from 'keymirror-nested';
 
 const actionTypes = keyMirrorNested({
     APP: {
+        INIT: null,
         CLIP: {
             ADD: null,
             EDIT: null,

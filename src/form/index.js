@@ -205,7 +205,7 @@ class FormSearch extends Component {
     }
     return (
       <Fragment>
-        <Button type="submit" color="primary" title="Edit Clip" className="mr-1" >
+        <Button type="submit" color="primary" title="Edit Clip" className="mr-1 " >
           <span className="fas fa-edit" />
         </Button>
         <Button type="buttons" color="danger" title="Cancel">

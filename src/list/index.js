@@ -45,7 +45,7 @@ class List extends Component {
         <div className="float-right">
           <button
             disabled={disabled}
-            className="mr-2 btn btn-warning"
+            className="mr-2 btn-sm btn btn-warning"
             type="button"
             title="Edit"
             onClick={evt => this.editClip(evt, idxClip)}>
@@ -53,7 +53,7 @@ class List extends Component {
           </button>
           <button
             disabled={disabled}
-            className="btn btn-danger"
+            className="btn-sm btn btn-danger"
             type="button"
             title="Remove"
             onClick={evt => this.deleteClip(evt, idxClip)}>
@@ -77,7 +77,7 @@ class List extends Component {
   setClips() {
     const { clips, selectedClipIdx, playClipIdx } = this.props.appState;
 
-    const listClips = clips.map((clip, idxClip) => {
+    const listClips = clips.length && clips.map((clip, idxClip) => {
       if (selectedClipIdx === idxClip) {
         return (
           <ListGroupItem
