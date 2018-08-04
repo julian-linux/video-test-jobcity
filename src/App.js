@@ -21,25 +21,24 @@ import List from './list';
 
 class App extends Component {
 
-  componentWillUpdate(prevProps, prevState) {
+  componentWillUpdate(prevProps) {
     const { playClip, selectedClip } = prevProps.appState;
-    console.log("playClip, selectedClip", playClip, selectedClip);
+
     if (playClip) {
       let src = 'https://download.blender.org/durian/trailer/sintel_trailer-480p.mp4';
-      console.log("selectedClip", selectedClip);
+
       if (selectedClip.start !== undefined) {
         src = `${src}#t=${selectedClip.start},${selectedClip.end}`;
       }
+
       const video = document.getElementById('videoclip');
-      console.log("video", video);
+
       const source = video.getElementsByTagName('source')[0];
-      console.log("source", source);
+
       source.setAttribute('src', src);
       video.load();
       video.play();
     }
-
-
   }
 
   render() {
