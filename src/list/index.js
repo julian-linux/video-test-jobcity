@@ -38,17 +38,17 @@ class List extends Component {
     this.props.actionSelectClip(clip);
   }
 
-  infoClip(ixdClip, clip) {
+  infoClip(idxClip, clip) {
     const disabled = this.props.appState.selectedClipIdx !== null;
     return (
-      <Fragment key={ixdClip}>
+      <Fragment key={idxClip}>
         <div className="float-right">
           <button
             disabled={disabled}
             className="mr-2 btn btn-warning"
             type="button"
             title="Edit"
-            onClick={evt => this.editClip(evt, ixdClip)}>
+            onClick={evt => this.editClip(evt, idxClip)}>
             <span className="fas fa-edit " />
           </button>
           <button
@@ -56,7 +56,7 @@ class List extends Component {
             className="btn btn-danger"
             type="button"
             title="Remove"
-            onClick={evt => this.deleteClip(evt, ixdClip)}>
+            onClick={evt => this.deleteClip(evt, idxClip)}>
             <span className="fas fa-trash" />
           </button>
         </div>
@@ -75,7 +75,7 @@ class List extends Component {
   }
 
   setClips() {
-    const { clips, selectedClipIdx } = this.props.appState;
+    const { clips, selectedClipIdx, playClipIdx } = this.props.appState;
 
     const listClips = clips.map((clip, idxClip) => {
       if (selectedClipIdx === idxClip) {
@@ -87,8 +87,10 @@ class List extends Component {
           </ListGroupItem>
         )
       } else {
+
         return (
           <ListGroupItem
+            active={playClipIdx === idxClip}
             tag="a"
             href="#"
             key={clip.name}
@@ -109,11 +111,11 @@ class List extends Component {
           onClick={evt => this.selectVideo(evt, null)}
         >
           <h4>Full Video</h4>
-        <div className="col-6">
-          Start: 0
+          <div className="col-6">
+            Start: 0
         </div>
-        <div className="col-6">
-          End: 52
+          <div className="col-6">
+            End: 52
         </div>
         </ListGroupItem>
         {listClips}

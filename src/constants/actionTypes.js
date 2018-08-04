@@ -6,6 +6,7 @@ const actionTypes = keyMirrorNested({
             ADD: null,
             EDIT: null,
             DELETE: null,
+            NEXT: null,
             SELECT: null,
         }
     },

@@ -20,6 +20,10 @@ const appSelectClip = clip => ({
     clip,
 });
 
+const appSelectNextClip = () => ({
+    type: actionTypes.APP.CLIP.NEXT
+});
+
 export const addClip = clip => dispatch => dispatch(appAddClip(clip));
 
 export const editClip = idx => dispatch => dispatch(appEditClip(idx));
@@ -27,3 +31,5 @@ export const editClip = idx => dispatch => dispatch(appEditClip(idx));
 export const deleteClip = idx => dispatch => dispatch(appDeleteClip(idx));
 
 export const selectClip = clip => dispatch => dispatch(appSelectClip(clip));
+
+export const selectNextClip = clip => dispatch => dispatch(appSelectNextClip());

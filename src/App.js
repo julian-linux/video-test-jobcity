@@ -3,23 +3,20 @@ import { connect } from 'react-redux';
 import Form from './form';
 import List from './list';
 
-// const getVideo = (appState) => {
-//   const { playClip, selectedClip } = appState;
-//   let src = 'https://download.blender.org/durian/trailer/sintel_trailer-480p.mp4';
-
-//   if (playClip) {
-//     if (selectedClip.start !== undefined) {
-//       src += `#t${selectedClip.start},${selectedClip.end}`;
-//     }
-//   }
-
-//   const video = document.getElementById('videoclip');
-//   console.log("video", video);
-//   // const source = video.getElementsByTagName('source');
-//   // source.setAttribute('src', src);
-// }
+import { selectNextClip } from './actions/app';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.jumpNextClip = this.jumpNextClip.bind(this);
+  }
+
+  jumpNextClip() {
+    
+    setTimeout(() => {
+      this.props.actionSelectNextClip();
+    }, 3000);
+  }
 
   componentWillUpdate(prevProps) {
     const { playClip, selectedClip } = prevProps.appState;
@@ -38,6 +35,8 @@ class App extends Component {
       source.setAttribute('src', src);
       video.load();
       video.play();
+
+      video.onpause = () => this.jumpNextClip();
     }
   }
 
@@ -50,7 +49,7 @@ class App extends Component {
           </div>
           <div className="col-md-4 ">
             <List />
-         </div>
+          </div>
           <div className="col-md-4">
             <video id="videoclip" controls preload="metadata"><source /></video>
           </div>
@@ -65,6 +64,8 @@ const mapStateToProps = state => ({
   appState: state.app,
 });
 
-const mapDispatchToProps = null;
+const mapDispatchToProps = {
+  actionSelectNextClip: selectNextClip,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
