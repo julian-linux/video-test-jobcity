@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import EditClip from '../form';
 
-import { editClip, deleteClip } from '../actions/app';
+import { editClip, deleteClip, selectClip } from '../actions/app';
 
 class List extends Component {
 
@@ -33,10 +33,9 @@ class List extends Component {
     this.props.actionDeleteClip(idxClip);
   }
 
-
-
-  selectVideo(clip) {
-
+  selectVideo(evt, clip) {
+    evt.preventDefault();
+    this.props.actionSelectClip(clip);
   }
 
   infoClip(ixdClip, clip) {
@@ -93,7 +92,7 @@ class List extends Component {
             tag="a"
             href="#"
             key={clip.name}
-            onClick={evt => this.selectVideo(clip)}
+            onClick={evt => this.selectVideo(evt, clip)}
           >
             {this.infoClip(idxClip, clip)}
           </ListGroupItem>
@@ -107,7 +106,7 @@ class List extends Component {
         <ListGroupItem
           tag="a"
           href="#"
-          onClick={evt => this.selectVideo()}
+          onClick={evt => this.selectVideo(evt, null)}
         >
           <h4>Full Video</h4>
         <div className="col-6">
@@ -141,6 +140,7 @@ class List extends Component {
 List.proptypes = {
   appState: PropTypes.object,
   actionEditClip: PropTypes.func,
+  actionSelectClip: PropTypes.func,
 };
 
 // export default List;
@@ -151,7 +151,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   actionEditClip: editClip,
-  actionDeleteClip: deleteClip
+  actionDeleteClip: deleteClip,
+  actionSelectClip: selectClip,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);

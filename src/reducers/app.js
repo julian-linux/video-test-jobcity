@@ -5,17 +5,23 @@ const initialState = {
     isEditing: false,
     selectedClip: {},
     selectedClipIdx: null,
+    playClip: false,
     clips: [],
 };
 
 
 const app = (state = initialState, action) => {
     switch (action.type) {
+        case actionTypes.APP.CLIP.SELECT:
+        return {
+            ...state,
+            selectedClip: action.clip || {},
+            playClip: true
+        }
+
         case actionTypes.APP.CLIP.DELETE:
         return {
             ...state,
-            // selectedClipIdx: null,
-            // selectedClip: {},
             clips: state.clips.filter((clip, idx) => idx !== action.idx)
         }
 

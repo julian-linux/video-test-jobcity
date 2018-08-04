@@ -1,38 +1,65 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import Form from './form';
 import List from './list';
 
-const getVideo = () => {
-  // const url = this.videoUrl;
-  // const source = (<source src={url} />);
-  const source = null;
-  return (
-    <video controls>
-      {source}
-    </video>
-  )
-}
+// const getVideo = (appState) => {
+//   const { playClip, selectedClip } = appState;
+//   let src = 'https://download.blender.org/durian/trailer/sintel_trailer-480p.mp4';
 
-const App = ({ props }) => {
-  const video = getVideo();
-  return (
-    <Fragment>
-      <div className="row">
-        <div className="col-md-6 offset-md-3">
-          {video}
+//   if (playClip) {
+//     if (selectedClip.start !== undefined) {
+//       src += `#t${selectedClip.start},${selectedClip.end}`;
+//     }
+//   }
+
+//   const video = document.getElementById('videoclip');
+//   console.log("video", video);
+//   // const source = video.getElementsByTagName('source');
+//   // source.setAttribute('src', src);
+// }
+
+class App extends Component {
+
+  componentWillUpdate(prevProps, prevState) {
+    const { playClip, selectedClip } = prevProps.appState;
+    console.log("playClip, selectedClip", playClip, selectedClip);
+    if (playClip) {
+      let src = 'https://download.blender.org/durian/trailer/sintel_trailer-480p.mp4';
+      console.log("selectedClip", selectedClip);
+      if (selectedClip.start !== undefined) {
+        src = `${src}#t=${selectedClip.start},${selectedClip.end}`;
+      }
+      const video = document.getElementById('videoclip');
+      console.log("video", video);
+      const source = video.getElementsByTagName('source')[0];
+      console.log("source", source);
+      source.setAttribute('src', src);
+      video.load();
+      video.play();
+    }
+
+
+  }
+
+  render() {
+    return (
+      <Fragment>
+        <div className="row">
+          <div className="col-md-4 ">
+            <Form />
+          </div>
+          <div className="col-md-4 ">
+            <List />
+         </div>
+          <div className="col-md-4">
+            <video id="videoclip" controls preload="metadata"><source /></video>
+          </div>
         </div>
-      </div>
-      <div className="row mt-3">
-        <div className="col-md-3">
-          <Form />
-        </div>
-        <div className="col-md-9">
-          <List />
-        </div>
-      </div>
-    </Fragment>
-  );
+      </Fragment>
+    );
+
+  }
 }
 
 const mapStateToProps = state => ({
