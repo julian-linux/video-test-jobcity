@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Input, Form, FormGroup, Label, Col, Button, FormFeedback } from 'reactstrap';
 
-import { addClip } from '../actions/app';
+import { addClip, searchByTags } from '../actions/app';
 
 class FormSearch extends Component {
 
@@ -165,8 +165,9 @@ class FormSearch extends Component {
     });
   }
 
-  searchByTags() {
-
+  searchByTags(evt) {
+    const { value } = evt.target;
+    this.props.actionSearchByTags(value);
   }
 
   validateInvalidTexts() {
@@ -224,9 +225,7 @@ class FormSearch extends Component {
             <h3>Search Clips</h3>
           </div>
           <div className="col-12">
-            <Form onSubmit={this.searchByTags} >
-              <Input placeholder="Tags" />
-            </Form>
+            <Input placeholder="Tags" onChange={this.searchByTags} />
           </div>
         </div>
       )
@@ -339,6 +338,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   actionAddClip: addClip,
+  actionSearchByTags: searchByTags,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FormSearch);

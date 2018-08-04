@@ -8,6 +8,7 @@ const initialState = {
     playClip: false,
     playClipIdx: null,
     clips: [],
+    tags: ''
 };
 
 
@@ -98,6 +99,12 @@ const app = (state = initialState, action) => {
                 clips,
                 selectedClipIdx: null,
                 selectedClip: {}
+            }
+        
+        case actionTypes.APP.SEARCH:
+            return {
+                ...state,
+                tags: action.tags
             }
         default:
             return { ...initialState };

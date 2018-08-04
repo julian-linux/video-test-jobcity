@@ -28,6 +28,11 @@ const appSelectNextClip = () => ({
     type: actionTypes.APP.CLIP.NEXT
 });
 
+const appSearchByTags = tags => ({
+    type: actionTypes.APP.SEARCH,
+    tags
+});
+
 export const init = () => dispatch => dispatch(appInit());
 
 export const addClip = clip => dispatch => dispatch(appAddClip(clip));
@@ -39,3 +44,5 @@ export const deleteClip = idx => dispatch => dispatch(appDeleteClip(idx));
 export const selectClip = clip => dispatch => dispatch(appSelectClip(clip));
 
 export const selectNextClip = clip => dispatch => dispatch(appSelectNextClip());
+
+export const searchByTags = tags => dispatch => dispatch(appSearchByTags(tags));

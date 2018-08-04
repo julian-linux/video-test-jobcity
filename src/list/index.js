@@ -75,33 +75,47 @@ class List extends Component {
   }
 
   setClips() {
-    const { clips, selectedClipIdx, playClipIdx } = this.props.appState;
+    const { tags, clips, selectedClipIdx, playClipIdx } = this.props.appState;
 
-    const listClips = clips.length && clips.map((clip, idxClip) => {
-      if (selectedClipIdx === idxClip) {
-        return (
-          <ListGroupItem
-            key={clip.name}
-          >
-            <EditClip onlyAdd={false} idxClip={idxClip} />
-          </ListGroupItem>
-        )
-      } else {
+    const listClips = clips.length && clips
+      .filter(clip => {
+        if (tags === '' || clip.tags === '') {
+          return true;
+        }
+        let ok = 0;
+        const tagList = tags.split(' ');
+        tagList.forEach(tag => {
+          if (clip.tags.includes(tag)) {
+            ok++;
+          }
+        });
+        return ok === tagList.length;
+      })
+      .map((clip, idxClip) => {
+        if (selectedClipIdx === idxClip) {
+          return (
+            <ListGroupItem
+              key={clip.name}
+            >
+              <EditClip onlyAdd={false} idxClip={idxClip} />
+            </ListGroupItem>
+          )
+        } else {
 
-        return (
-          <ListGroupItem
-            active={playClipIdx === idxClip}
-            tag="a"
-            href="#"
-            key={clip.name}
-            onClick={evt => this.selectVideo(evt, clip)}
-          >
-            {this.infoClip(idxClip, clip)}
-          </ListGroupItem>
-        )
-      }
+          return (
+            <ListGroupItem
+              active={playClipIdx === idxClip}
+              tag="a"
+              href="#"
+              key={clip.name}
+              onClick={evt => this.selectVideo(evt, clip)}
+            >
+              {this.infoClip(idxClip, clip)}
+            </ListGroupItem>
+          )
+        }
 
-    });
+      });
 
     return (
       <ListGroup>
